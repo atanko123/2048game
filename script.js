@@ -6,6 +6,18 @@ document.addEventListener('DOMContentLoaded', () =>{
 	const saved = []
 	const width = 4
 
+	let score = 0
+	const scoreboard = document.getElementById("currentScore")
+
+	const localStorage = window.localStorage;
+	let highScore = 0
+	const hs = localStorage.getItem('highScore')
+	if (hs) {
+		highScore = parseInt(hs)
+	} 
+	const highscoreboard = document.getElementById("highScore")
+	highscoreboard.innerHTML = highScore
+
 	const colors = {
 		"": "#EEE4DA",
 		"2": "#cccccc",
@@ -18,9 +30,19 @@ document.addEventListener('DOMContentLoaded', () =>{
 		"256": "#ffd633",
 		"512": "#ffcc00",
 		"1024": "#e6b800",
-		"2048": "#cca300"
+		"2048": "#cca300",
+		"4096": "#FFDF00"
 	}
-	let prvic = false
+
+	function updateScoreboard() {
+		if (score > highScore) {
+			highScore = score
+			highscoreboard.innerHTML = highScore
+			localStorage.setItem('highScore', score)
+			highscoreboard.innerHTML = highScore
+		}
+		scoreboard.innerHTML = score
+	}
 
 	function changeValues(div, value) {
 		div.innerHTML = value
@@ -49,18 +71,9 @@ document.addEventListener('DOMContentLoaded', () =>{
 		for (let i = 0; i < width*width; i++) {
 			const div = document.createElement("div")
 			div.classList.add("grid-item")
-			if (prvic) {
-				if(i == 5) {
-					changeValues(div, 2)
-				}
-				else if (i==9) {
-					changeValues(div, 2)
-				}
-			} 
 			fieldId.appendChild(div)
 			squares.push(div)
 		}
-		prvic = false
 	}
 
 	function randomNumber() {
@@ -77,6 +90,8 @@ document.addEventListener('DOMContentLoaded', () =>{
 			const random = emptySquares[Math.floor(Math.random() * emptySquares.length)];
 			changeValues(random, 2)
 		}
+
+		updateScoreboard()
 	}
 
 	function newLine(line) {
@@ -94,6 +109,7 @@ document.addEventListener('DOMContentLoaded', () =>{
 					}
 					else if (value == value2) {
 						const newValue = value + value2
+						score += newValue
 						changeValues(line[i], newValue)
 						changeValues(line[j], "")
 						didMove = true
@@ -184,9 +200,6 @@ document.addEventListener('DOMContentLoaded', () =>{
 	randomNumber()
 	randomNumber()
 
-
-
-
 	document.addEventListener('keydown', keyAction);
 
 	function keyAction(e) {
@@ -194,22 +207,18 @@ document.addEventListener('DOMContentLoaded', () =>{
 		switch (key) {
 			case "KeyW":
 			case "ArrowUp":
-				console.log("Up")
 				pressUp()
 			break
 			case "KeyS":
 			case "ArrowDown":
-				console.log("Down")
 				pressDown()
 			break
 			case "KeyA":
 			case "ArrowLeft":
-				console.log("Left")
 				pressLeft()
 			break
 			case "KeyD":
 			case "ArrowRight":
-				console.log("Right")
 				pressRight()
 			break
 		}
